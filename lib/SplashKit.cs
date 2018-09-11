@@ -1,0 +1,1 @@
+/Users/moonkid/.splashkit/commands/mcs/SplashKit.cs
