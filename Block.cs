@@ -18,13 +18,12 @@ namespace Breakout
         public Bitmap CollisionBitmap;
 
 
-        public Block(Window w, int width, int height)
+        public Block(double x, double y, int width, int height)
         {
-            X = w.Width/2;
-            Y = w.Height/2;
+            X = x;
+            Y = y;
             Width = width;
             Height = height;
-            MainColor = Color.Blue;
 
             CollisionBitmap = SplashKit.CreateBitmap("Block", Width, Height);
             CollisionBitmap.SetupCollisionMask();
@@ -41,18 +40,20 @@ namespace Breakout
         }
     }
 
-    public sealed class Bat: Block
+
+    public class Bat: Block
     {
-        private const int SPEED = 5;    // bat speed
+        private const int SPEED = 20;    // bat speed
 
         
-        public Bat(Window w, int width, int height): base(w, width, height)
+        public Bat(double x, double y, int width, int height): base(x, y, width, height)
         {
+            MainColor = Color.Blue;
         }
 
         public void StayOnWindow(Window w)
         {
-            const int GAP = 10;
+            const int GAP = 5;
 
             if (X + Width > w.Width - GAP)
             {
@@ -77,7 +78,7 @@ namespace Breakout
 
     public sealed class Brick: Block
     {
-        public Brick(Window w, int width, int height): base(w, width, height)
+        public Brick(double x, double y, int width, int height): base(x,y,width, height)
         {
         }
     }

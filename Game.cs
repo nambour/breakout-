@@ -31,7 +31,7 @@ namespace Breakout
         public Breakout(Window w)
         {
             _gameWindow = w;
-            _playerBat = new Bat(w, 100, 30);
+            _playerBat = new Bat(0,0, 100, 20);
         }
 
         public void Initialize()
@@ -41,7 +41,18 @@ namespace Breakout
 
         public void HandleInput()
         {
+            SplashKit.ProcessEvents();
             
+            if (SplashKit.KeyDown(KeyCode.LeftKey))
+            {
+                _playerBat.MoveLeft();
+            }
+            else if (SplashKit.KeyDown(KeyCode.RightKey))
+            {
+                _playerBat.MoveRight();
+            }
+
+            _playerBat.StayOnWindow(_gameWindow);
         }
 
         public void Update()
@@ -52,6 +63,7 @@ namespace Breakout
         public void Draw()
         {
             _gameWindow.Clear(Color.Black);
+           
             _playerBat.Draw();
             
             _gameWindow.Refresh(60);
