@@ -691,13 +691,13 @@
       "projectName": "breakout",
       "projectPath": "/Users/moonkid/Uni/SIT771 Object-Oriented Development/Code/breakout/breakout.csproj",
       "packagesPath": "/Users/moonkid/.nuget/packages/",
-      "outputPath": "/Users/moonkid/Uni/SIT771 Object-Oriented Development/Code/breakout/obj",
+      "outputPath": "/Users/moonkid/Uni/SIT771 Object-Oriented Development/Code/breakout/obj/",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "/Users/moonkid/.config/NuGet/NuGet.Config"
+        "/Users/moonkid/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp2.1"
@@ -720,9 +720,8 @@
       "netcoreapp2.1": {
         "dependencies": {
           "Microsoft.NETCore.App": {
-            "suppressParent": "All",
             "target": "Package",
-            "version": "2.1",
+            "version": "[2.1.0, )",
             "autoReferenced": true
           }
         },

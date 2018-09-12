@@ -30,7 +30,7 @@ namespace Breakout
             CollisionBitmap.SetupCollisionMask();
         }
 
-        public virtual void Draw()
+        public void Draw()
         {
             CollisionBitmap.FillRectangle(MainColor,CollisionBitmap.BoundingRectangle());
             CollisionBitmap.Draw(X,Y);
@@ -43,6 +43,9 @@ namespace Breakout
 
     public sealed class Bat: Block
     {
+        private const int SPEED = 5;    // bat speed
+
+        
         public Bat(Window w, int width, int height): base(w, width, height)
         {
         }
@@ -63,11 +66,12 @@ namespace Breakout
 
         public void MoveLeft()
         {
+            X -= SPEED;
         }
 
         public void MoveRight()
         {
-            
+            X += SPEED;
         }
     }
 

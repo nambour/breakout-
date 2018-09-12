@@ -1,14 +1,29 @@
 //SIT771 6.3
-//An Adoptation of Breakout
+//Breakout: Opposition
 //
 
 using System;
 using SplashKitSDK;
 
-public class Program
+namespace Breakout
 {
-    public static void Main()
+    public class Program
     {
+        
+        public static void Main()
+        {
+            Window gameWindow = new Window("Breakout: Opposition", 600, 800);
+            Breakout game = new Breakout(gameWindow);
 
+            while(!gameWindow.CloseRequested)
+            {
+                game.HandleInput();
+                game.Update();
+                game.Draw();
+                SplashKit.Delay(100);
+            }
+            
+
+        }
     }
 }
