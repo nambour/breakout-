@@ -13,13 +13,14 @@ namespace Breakout
 
         public int Height {get; set;}
         
-        public Color MainColor {get; set;}
+        protected Color MainColor {get;set;}
 
         public Bitmap CollisionBitmap;
 
 
-        public Block(double x, double y, int width, int height)
+        public Block(Color color, double x, double y, int width, int height)
         {
+            MainColor = color;
             X = x;
             Y = y;
             Width = width;
@@ -45,16 +46,15 @@ namespace Breakout
     {
         private const int SPEED = 20;    // bat speed
 
-        
-        public Bat(double x, double y, int width, int height): base(x, y, width, height)
+        public Bat(Color color, double x, double y, int width, int height): base(color, x, y, width, height)
         {
-            MainColor = Color.Blue;
-        }
 
+        }
+ 
         public void StayOnWindow(Window w)
         {
             const int GAP = 5;
-
+            
             if (X + Width > w.Width - GAP)
             {
                 X = w.Width - GAP - Width;
@@ -76,10 +76,12 @@ namespace Breakout
         }
     }
 
-    public sealed class Brick: Block
+
+   public class Brick: Block
     {
-        public Brick(double x, double y, int width, int height): base(x,y,width, height)
+        public Brick(Color color, double x, double y, int width, int height): base(color, x, y, width, height)
         {
         }
+        
     }
 }

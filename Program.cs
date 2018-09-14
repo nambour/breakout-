@@ -12,7 +12,7 @@ namespace Breakout
         
         public static void Main()
         {
-            Window gameWindow = new Window("Breakout: Opposition", 600, 800);
+            Window gameWindow = new Window("Breakout: Opposition", 800, 800);
             Breakout game = new Breakout(gameWindow);
 
             //const uint FRAMES_PER_SECOND = 60;
@@ -25,11 +25,12 @@ namespace Breakout
             while(!gameWindow.CloseRequested)
             {
                 //loop.Start();
+
+
+
                 game.HandleInput();
                 game.Update();
                 game.Draw();
-
-               
                 
                  //sleeptime = loop.Ticks - SKIP_TICKS;
                 //Console.WriteLine(loop.Ticks);
