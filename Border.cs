@@ -15,15 +15,17 @@ namespace Breakout
             Point2D topRight = new Point2D() {X = w.Width, Y = 0};
             Point2D bottomRight = new Point2D() {X = w.Width, Y = w.Height};
 
-            Line leftLine = new Line() {
+            Line leftLine = new Line()
+            {
                 StartPoint = new Point2D() {X = 0, Y = 0}, 
                 EndPoint = new Point2D() {X = 0, Y = w.Height}
-                };
+            };
 
-            Line rightLine = new Line() {
+            Line rightLine = new Line()
+            {
                 StartPoint = new Point2D() {X = w.Width, Y = 0}, 
                 EndPoint = new Point2D() {X = w.Width, Y = w.Height}
-                };
+            };
 
             Lines.Add(leftLine);
             Lines.Add(rightLine);
