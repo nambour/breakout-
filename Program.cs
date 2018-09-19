@@ -3,10 +3,20 @@
 //
 
 using System;
+using System.Collections.Generic;
 using SplashKitSDK;
 
 namespace Breakout
 {
+    static class Constants
+    {
+        public const int GAP = 5;
+        public const int BatSpeed = 20;
+        public const int BallSpeed = 5;
+        public const int BrickWidth = 80;
+
+    }
+
     public class Program
     {
         
@@ -22,6 +32,8 @@ namespace Breakout
 
             //uint sleeptime = 1;
 
+            game.Initialize();
+
             while(!gameWindow.CloseRequested)
             {
                 //loop.Start();
@@ -29,6 +41,7 @@ namespace Breakout
 
 
                 game.HandleInput();
+                game.CheckCollision();
                 game.Update();
                 game.Draw();
                 

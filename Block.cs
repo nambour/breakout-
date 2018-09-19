@@ -1,8 +1,12 @@
 using System;
+using System.Collections.Generic;
 using SplashKitSDK;
 
 namespace Breakout
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public abstract class Block
     {
         public double X {get; set;}
@@ -13,14 +17,14 @@ namespace Breakout
 
         public int Height {get; set;}
         
-        protected Color MainColor {get;set;}
+        protected Color Color {get;set;}
 
         public Bitmap CollisionBitmap;
 
 
         public Block(Color color, double x, double y, int width, int height)
         {
-            MainColor = color;
+            Color = color;
             X = x;
             Y = y;
             Width = width;
@@ -32,20 +36,16 @@ namespace Breakout
 
         public void Draw()
         {
-            CollisionBitmap.FillRectangle(MainColor,CollisionBitmap.BoundingRectangle());
+            CollisionBitmap.FillRectangle(Color, CollisionBitmap.BoundingRectangle());
             CollisionBitmap.Draw(X,Y);
-        }
-
-        public void Vanish()
-        {
         }
     }
 
-
-    public class Bat: Block
+    /// <summary>
+    /// 
+    /// </summary>
+    public abstract class Bat: Block
     {
-        private const int SPEED = 20;    // bat speed
-
         public Bat(Color color, double x, double y, int width, int height): base(color, x, y, width, height)
         {
 
@@ -53,31 +53,50 @@ namespace Breakout
  
         public void StayOnWindow(Window w)
         {
-            const int GAP = 5;
-            
-            if (X + Width > w.Width - GAP)
+            if (X + Width > w.Width - Constants.GAP)
             {
-                X = w.Width - GAP - Width;
+                X = w.Width - Constants.GAP - Width;
             }
-            else if (X < GAP)
+            else if (X < Constants.GAP)
             {
-                X = GAP;
+                X = Constants.GAP;
             }
         }
 
         public void MoveLeft()
         {
-            X -= SPEED;
+            X -= Constants.BatSpeed;
         }
 
         public void MoveRight()
         {
-            X += SPEED;
+            X += Constants.BatSpeed;
+        }
+    }
+
+    public sealed class Player: Bat
+    {
+        public Player(Color color, double x, double y, int width, int height): base(color, x, y, width, height)
+        {
+
+        }
+    }
+
+    public sealed class NPC: Bat
+    {
+        public NPC(Color color, double x, double y, int width, int height): base(color, x, y, width, height)
+        {
+            
         }
     }
 
 
-   public class Brick: Block
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class Brick: Block
     {
         public Brick(Color color, double x, double y, int width, int height): base(color, x, y, width, height)
         {

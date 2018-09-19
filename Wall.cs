@@ -6,8 +6,6 @@ namespace Breakout
 {
     public class Wall
     {
-        private const int _ROW = 7;
-        private const int _BRICKWIDTH = 80;
         public List<Brick> Bricks = new List<Brick>();
 
         private List<Color> _rainbow = new List<Color>(7);
@@ -15,8 +13,6 @@ namespace Breakout
 
         public Wall(Window w)
         {   
-            var col = w.Width/_BRICKWIDTH;
-
             _rainbow.Add(Color.Red);
             _rainbow.Add(Color.Orange);
             _rainbow.Add(Color.Yellow);
@@ -25,12 +21,14 @@ namespace Breakout
             _rainbow.Add(Color.Indigo);
             _rainbow.Add(Color.Violet);
 
+            var column = Math.Floor(Convert.ToDouble(w.Width/Constants.BrickWidth));
+
             for (int n = 0; n < _rainbow.Count; n++)
             {   
-                for (int i = 0; i < col; i++)
+                for (int i = 0; i < column; i++)
                 {
-                    Brick brick = new Brick(_rainbow[n], _BRICKWIDTH*i, w.Height/2-7*20/2+n*20, 80, 20);
-                    Bricks.Add(brick);
+                    Brick b = new Brick(_rainbow[n], Constants.BrickWidth*i, w.Height/2 - 70 + n*20, 80, 20);
+                    Bricks.Add(b);
                 }
             }   
 

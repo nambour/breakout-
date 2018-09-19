@@ -6,7 +6,6 @@ namespace Breakout
 {
     public class Ball
     {
-        const int SPEED = 4;
         public double X {get; set;}
 
         public double Y {get; set;}
@@ -18,6 +17,8 @@ namespace Breakout
         protected Color MainColor {get;set;}
 
         public Circle Circle;
+
+        private enum group {player, npc};
 
         private Bat _bat;
 
@@ -38,6 +39,13 @@ namespace Breakout
             
         }
 
+        
+        public void Subscribe(Breakout theGame)
+        {
+           // theGame.BallLaunch += new Breakout.BallLaunchHandler(HasLaunched);
+           theGame.OnBallLaunch += HasLaunched;
+        }
+
         public void Draw()
         {
             SplashKit.FillCircle(MainColor, X, Y, Radius);
@@ -53,80 +61,40 @@ namespace Breakout
         {
             X += Velocity.X;
             Y += Velocity.Y;
+
+            Circle.Center.X = X;
+            Circle.Center.Y = Y;
+            Circle.Radius = Radius;
         }
 
         
         public void HasLaunched(Object sender, EventArgs e)
         {
-            Bat b = (Bat)sender;
+            Breakout game = (Breakout) sender;
+            Random random = new Random();
+            var randomX = random.Next(0,game.GameWindow.Width);
+            Point2D fromPt = new Point2D() {X = X, Y = Y};
+            Point2D toPt = new Point2D() {X = randomX, Y = 100};
 
-            Point2D fromPt = new Point2D()
-            {
-                X = X,
-                Y = Y
-            };
+            Vector2D dir = SplashKit.UnitVector(SplashKit.VectorPointToPoint(fromPt, toPt));
+            Velocity = SplashKit.VectorMultiply(dir, Constants.BallSpeed);
+
+            Console.WriteLine("Ball Launched");
+
+        }
+
+
+        public void HasCollided(Object sender, EventArgs e)
+        {
+            Point2D fromPt = new Point2D() {X = 0, Y = 100};
+            Point2D toPt = new Point2D() {X = 200, Y = 500};
             
-            Point2D toPt = new Point2D()
-            {
-                X = 0,
-                Y = 0
-            };
-
-            Vector2D dir;
-            dir = SplashKit.UnitVector(SplashKit.VectorPointToPoint(fromPt, toPt));
-            Velocity = SplashKit.VectorMultiply(dir, SPEED);
+            Vector2D dir = SplashKit.UnitVector(SplashKit.VectorPointToPoint(fromPt, toPt));
+            Velocity = SplashKit.VectorMultiply(dir, Constants.BallSpeed);
+            Console.WriteLine("Ball Bounced");
         }
 
-        public void CheckCollision(List<Line> boarder, List<Bat> bats, Wall wall)
-        {
-            if (CollidedWith(boarder))
-            {
-                Console.WriteLine("got it!!!");
-            }
-
-            foreach (Bat bat in bats)
-            {
-                if (CollidedWith(bat))
-                {
-                    
-                }
-            }
-
-            foreach (Brick brick in wall.Bricks)
-            {
-                if (CollidedWith(brick))
-                {
-                    
-                }
-            }
-
-            
-
-
-        }
-
-        public bool CollidedWith(Brick brick)
-        {
-            return false;
-        }
-
-        public bool CollidedWith(Bat bat)
-        {
-            return false;
-        }
-
-        public bool CollidedWith(List<Line> boarder)
-        {
-            foreach (Line line in boarder)
-            {
-                if (SplashKit.LineIntersectsCircle(line, this.Circle))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
+        
 
 
 
