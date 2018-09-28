@@ -12,17 +12,17 @@ namespace Breakout
     {
         public Window GameWindow;
 
-        private Wall _wall;
+        public Wall Wall;
 
-        private Bat _npc;
+        public Bat Npc;
 
-        private Bat _player;
+        public Bat Player;
 
         private List<Bat> _bats = new List<Bat>();
 
-        private Ball _playerBall;
+        public Ball PlayerBall;
 
-        private Ball _npcBall;
+        public Ball NpcBall;
 
         private Font _font;
 
@@ -30,10 +30,48 @@ namespace Breakout
 
         private Border _border;
 
+        public bool IsGameOver = false;
+
         public delegate void EventHandler(object sender, EventArgs e);
-        public event EventHandler OnBallLaunch;
+        public event EventHandler Launch;
 
+        public void OnLaunch(EventArgs e)
+        {
+            if (Launch != null)
+            {
+                this.Launch(this, e);
+            }
+        }
 
+        public event EventHandler CollideWithBorder;
+
+        public void OnCollideWithBorder(EventArgs e)
+        {
+            if (CollideWithBorder != null)
+            {
+                this.CollideWithBorder(this, e);
+            }
+        }
+
+        public event EventHandler CollideWithBrick;
+
+        public void OnCollideWithBrick(EventArgs e)
+        {
+            if (CollideWithBrick != null)
+            {
+                this.CollideWithBrick(this, e);
+            }
+        }
+
+        public event EventHandler CollideWithBat;
+
+        public void OnCollideWithBat(EventArgs e)
+        {
+            if (CollideWithBat != null)
+            {
+                this.CollideWithBat(this, e);
+            }
+        }
         
 
         
@@ -46,12 +84,19 @@ namespace Breakout
 
             _border =  new Border(w);
 
-            _player = new Player(Color.Blue, w.Width/2, w.Height*0.95, 80, 10);
-            _bats.Add(_player);
+            Player = new Player(Constants.PlayerColor, w.Width/2, w.Height*0.95, 580, 5);
             
-            _wall = new Wall(w);
+            _bats.Add(Player);
 
-            _playerBall = new Ball(w, Color.Aqua, _player, 7);
+            Npc = new NPC(Constants.NPCColor, w.Width/2, w.Height*0.05, 1000, 5);
+
+            _bats.Add(Npc);
+            
+            Wall = new Wall(w);
+
+            PlayerBall = new Ball(w, Constants.PlayerBallColor, Player);
+
+            NpcBall = new Ball(w,Constants.NPCBallColor, Npc);
 
             //_playerBall.HasLaunched(_player, EventArgs.Empty);
 
@@ -61,7 +106,8 @@ namespace Breakout
         public void Initialize()
         {
             //register event 
-            _playerBall.Subscribe(this);
+            PlayerBall.Subscribe(this);
+            NpcBall.Subscribe(this);
             
             
         }
@@ -72,64 +118,94 @@ namespace Breakout
             
             if (SplashKit.KeyDown(KeyCode.LeftKey))
             {
-                _player.MoveLeft();
+                Player.MoveLeft();
             }
             else if (SplashKit.KeyDown(KeyCode.RightKey))
             {
-                _player.MoveRight();
+                Player.MoveRight();
             }
 
             else if (SplashKit.KeyTyped(KeyCode.SpaceKey))
             {
-                if(OnBallLaunch != null)
-                {
-                    OnBallLaunch(this, EventArgs.Empty);
-                }               
+                this.OnLaunch(EventArgs.Empty);            
             }
 
-            _player.StayOnWindow(GameWindow);
+            Player.StayOnWindow(GameWindow);
 
             
         }
 
         public void CheckCollision()
         {
-            CheckBall(_playerBall, _border);
-            CheckBall(_playerBall, _player);
-            CheckBall(_playerBall, _wall);
+            CheckBallCollision(PlayerBall, _border);
+            CheckBallCollision(PlayerBall, Wall);
+            CheckBallCollision(PlayerBall, Player);
+
+            CheckBallCollision(NpcBall, _border);
+            CheckBallCollision(NpcBall, Wall);
+            CheckBallCollision(NpcBall, Player);
+
+            
+            
         }
 
-        private void CheckBall(Ball ball, Border border)
+        private void CheckBallCollision(Ball ball, Border border)
         {
             foreach (Line line in _border.Lines)
             {
                 
-                if (SplashKit.LineIntersectsCircle(line, _playerBall.Circle))
+                if (SplashKit.LineIntersectsCircle(line, PlayerBall.Circle))
                 {
-                    
-                    Console.WriteLine("Hit Border");
-
-                    _playerBall.HasCollided(_player, EventArgs.Empty);
+                    this.OnCollideWithBorder(EventArgs.Empty);
+                    Console.WriteLine(ball.GetType().Name + " hit " + border.GetType().Name);                 
                 }
             }
 
         }
 
-        private void CheckBall(Ball ball, Bat bat)
+        private void CheckBallCollision(Ball ball, Wall wall)
         {
+            var aliveBricks = -1;
+            foreach (Brick brick in wall.Bricks)
+            {
+                if (brick.IsEnabled)
+                {
+                   
+                    aliveBricks += 1;
+
+                    if (SplashKit.BitmapCircleCollision(brick.CollisionBitmap, brick.X, brick.Y, ball.Circle))
+                    {
+                        this.OnCollideWithBrick(EventArgs.Empty);
+                        brick.IsEnabled = false;
+
+                        Console.WriteLine(ball.GetType().Name + " hit " + brick.GetType().Name);
+                    }                
+                }            
+            }
+
+            if (aliveBricks == 0)
+            {
+                IsGameOver = true;
+            }
+        }
+
+        private void CheckBallCollision(Ball ball, Bat bat)
+        {
+            if (SplashKit.BitmapCircleCollision(bat.CollisionBitmap, bat.X, bat.Y, ball.Circle))
+            {
+                this.OnCollideWithBat(EventArgs.Empty);
+                Console.WriteLine(ball.GetType().Name + " hit " + bat.GetType().Name);
+            }
 
         }
 
-        private void CheckBall(Ball ball, Wall wall)
-        {
-
-        }
+        
 
 
         public void Update()
         {
 
-            _playerBall.Update();
+            PlayerBall.Update();
 
                 
             
@@ -139,11 +215,13 @@ namespace Breakout
         {
             GameWindow.Clear(Color.Black);
 
-            _wall.Draw();
+            Wall.Draw();
            
-            _player.Draw();
+            Player.Draw();
             
-            _playerBall.Draw();
+            PlayerBall.Draw();
+
+            Npc.Draw();
             
             GameWindow.Refresh();
         }

@@ -8,12 +8,22 @@ using SplashKitSDK;
 
 namespace Breakout
 {
-    static class Constants
+    public static class Constants
     {
         public const int GAP = 5;
         public const int BatSpeed = 20;
         public const int BallSpeed = 5;
         public const int BrickWidth = 80;
+
+        public const int BallRadius = 5;
+
+        public static readonly Color PlayerBallColor = Color.Aqua;
+
+        public static readonly Color PlayerColor = Color.Blue;
+
+        public static readonly Color NPCBallColor = Color.Aqua;
+
+        public static readonly Color NPCColor = Color.Blue;
 
     }
 
@@ -25,18 +35,11 @@ namespace Breakout
             Window gameWindow = new Window("Breakout: Opposition", 800, 800);
             Breakout game = new Breakout(gameWindow);
 
-            //const uint FRAMES_PER_SECOND = 60;
-            //const uint SKIP_TICKS = 1000 / FRAMES_PER_SECOND;
-
-            //Timer loop = SplashKit.CreateTimer("loop");
-
-            //uint sleeptime = 1;
-
             game.Initialize();
 
-            while(!gameWindow.CloseRequested)
+            while(!gameWindow.CloseRequested && !game.IsGameOver)
             {
-                //loop.Start();
+                
 
 
 
@@ -45,8 +48,7 @@ namespace Breakout
                 game.Update();
                 game.Draw();
                 
-                 //sleeptime = loop.Ticks - SKIP_TICKS;
-                //Console.WriteLine(loop.Ticks);
+                 
             
             }
             

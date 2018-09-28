@@ -18,18 +18,22 @@ namespace Breakout
 
         public Circle Circle;
 
-        private enum group {player, npc};
+        public enum BallGroup {player, npc};
+        public BallGroup Group;
+
 
         private Bat _bat;
+
+        public bool IsStandby = true;
 
         
 
 
-        public Ball(Window w, Color color, Bat bat, int radius)
+        public Ball(Window w, Color color, Bat bat)
         {
             _bat = bat;
             MainColor = color;
-            Radius = radius;
+            Radius = Constants.BallRadius;
             X = bat.X + bat.Width/2;
             Y = bat.Y - Radius;
             Circle.Center.X = X;
@@ -43,7 +47,10 @@ namespace Breakout
         public void Subscribe(Breakout theGame)
         {
            // theGame.BallLaunch += new Breakout.BallLaunchHandler(HasLaunched);
-           theGame.OnBallLaunch += HasLaunched;
+           theGame.Launch += HasLaunched;
+           theGame.CollideWithBorder += HasCollidedWithBorder;
+           theGame.CollideWithBrick += HasCollidedWithBrick;
+           theGame.CollideWithBat += HasCollidedWithBat;
         }
 
         public void Draw()
@@ -55,51 +62,100 @@ namespace Breakout
         {
             X = _bat.X + _bat.Width/2;
             Y = _bat.Y - Radius;
-        }
-
-        public void Update()
-        {
-            X += Velocity.X;
-            Y += Velocity.Y;
 
             Circle.Center.X = X;
             Circle.Center.Y = Y;
             Circle.Radius = Radius;
         }
 
+        public void Update()
+        {
+            if (IsStandby)
+            {
+                StayOnBat();
+            }
+            else
+            {
+                X += Velocity.X;
+                Y += Velocity.Y;
+
+                Circle.Center.X = X;
+                Circle.Center.Y = Y;
+                Circle.Radius = Radius;
+            }
+        }
+
         
         public void HasLaunched(Object sender, EventArgs e)
         {
-            Breakout game = (Breakout) sender;
-            Random random = new Random();
-            var randomX = random.Next(0,game.GameWindow.Width);
-            Point2D fromPt = new Point2D() {X = X, Y = Y};
-            Point2D toPt = new Point2D() {X = randomX, Y = 100};
+            if (IsStandby)
+            {
+                Breakout game = (Breakout) sender;
+                Random random = new Random();
+                var randomX = random.Next(0,game.GameWindow.Width);
+                Point2D fromPt = new Point2D() {X = X, Y = Y};
+                Point2D toPt = new Point2D() {X = randomX, Y = 100};
 
-            Vector2D dir = SplashKit.UnitVector(SplashKit.VectorPointToPoint(fromPt, toPt));
-            Velocity = SplashKit.VectorMultiply(dir, Constants.BallSpeed);
+                Vector2D dir = SplashKit.UnitVector(SplashKit.VectorPointToPoint(fromPt, toPt));
+                Velocity = SplashKit.VectorMultiply(dir, Constants.BallSpeed);
 
-            Console.WriteLine("Ball Launched");
+                IsStandby = false;
+
+                Console.WriteLine(this.GetType().Name + " Launched");
+            }
 
         }
-
-
-        public void HasCollided(Object sender, EventArgs e)
-        {
-            Point2D fromPt = new Point2D() {X = 0, Y = 100};
-            Point2D toPt = new Point2D() {X = 200, Y = 500};
-            
-            Vector2D dir = SplashKit.UnitVector(SplashKit.VectorPointToPoint(fromPt, toPt));
-            Velocity = SplashKit.VectorMultiply(dir, Constants.BallSpeed);
-            Console.WriteLine("Ball Bounced");
-        }
-
         
+        public void HasCollidedWithBorder(Object sender, EventArgs e)
+        {
+            var normal = SplashKit.VectorFromAngle(0,1);
+            var reflection = SplashKit.VectorSubtract
+            (
+                Velocity, SplashKit.VectorMultiply
+                (
+                    normal, 2*SplashKit.DotProduct
+                    (
+                        Velocity, normal)));
 
 
+            Velocity = reflection;
+
+            Console.WriteLine(this.GetType().Name + " Bounced");
+        }
+
+        public void HasCollidedWithBrick(Object sender, EventArgs e)
+        {
+            var normal = SplashKit.VectorFromAngle(90,1);
+            var reflection = SplashKit.VectorSubtract
+            (
+                Velocity, SplashKit.VectorMultiply
+                (
+                    normal, 2*SplashKit.DotProduct
+                    (
+                        Velocity, normal)));
 
 
+            Velocity = reflection;
 
+            Console.WriteLine(this.GetType().Name + " Bounced");
+        }
+
+        public void HasCollidedWithBat(Object sender, EventArgs e)
+        {
+            var normal = SplashKit.VectorFromAngle(90,1);
+            var reflection = SplashKit.VectorSubtract
+            (
+                Velocity, SplashKit.VectorMultiply
+                (
+                    normal, 2*SplashKit.DotProduct
+                    (
+                        Velocity, normal)));
+
+
+            Velocity = reflection;
+
+            Console.WriteLine(this.GetType().Name + " Bounced");
+        }
 
     }
 

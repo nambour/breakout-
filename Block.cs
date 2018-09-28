@@ -21,6 +21,8 @@ namespace Breakout
 
         public Bitmap CollisionBitmap;
 
+        public bool IsEnabled = true;
+
 
         public Block(Color color, double x, double y, int width, int height)
         {
@@ -31,13 +33,17 @@ namespace Breakout
             Height = height;
 
             CollisionBitmap = SplashKit.CreateBitmap("Block", Width, Height);
-            CollisionBitmap.SetupCollisionMask();
         }
 
         public void Draw()
         {
-            CollisionBitmap.FillRectangle(Color, CollisionBitmap.BoundingRectangle());
-            CollisionBitmap.Draw(X,Y);
+            if(IsEnabled)
+            {
+                CollisionBitmap.FillRectangle(Color, CollisionBitmap.BoundingRectangle());
+                CollisionBitmap.Draw(X,Y);
+                CollisionBitmap.SetupCollisionMask();
+            }
+            
         }
     }
 

@@ -23,7 +23,7 @@ namespace Breakout
 
             var column = Math.Floor(Convert.ToDouble(w.Width/Constants.BrickWidth));
 
-            for (int n = 0; n < _rainbow.Count; n++)
+            for (int n = 0; n < _rainbow.Count-6; n++)
             {   
                 for (int i = 0; i < column; i++)
                 {
